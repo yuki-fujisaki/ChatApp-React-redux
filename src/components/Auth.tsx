@@ -36,15 +36,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     height: "100vh",
   },
-  modal: {
-    outline: "none",
-    position: "absolute",
-    width: 400,
-    borderRadius: 10,
-    backgroundColor: "white",
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(10),
-  },
   image: {
     backgroundImage:
       "url(https://images.unsplash.com/photo-1581784368651-8916092072cf?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=934&q=80)",
@@ -73,10 +64,49 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  modal: {
+    outline: "none",
+    position: "absolute",
+    width: 400,
+    borderRadius: 10,
+    backgroundColor: "white",
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(10),
+  },
 }));
 
 const Auth: React.FC = () => {
   const classes = useStyles();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLogin, setIsLogin] = useState(true);
+  const [openModal, setOpenModal] = React.useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+
+  const sendResetEmail = async (e: React.MouseEvent<HTMLElement>) => {
+    await auth
+      .sendPasswordResetEmail(resetEmail)
+      .then(() => {
+        setOpenModal(false);
+        setResetEmail("");
+      })
+      .catch((err) => {
+        alert(err.message);
+        setResetEmail("");
+      });
+  };
+
+  const signInGoogle = async () => {
+    await auth.signInWithPopup(provider).catch((err) => alert(err.message));
+  };
+  const signInEmail = async () => {
+    await auth.signInWithEmailAndPassword(email, password);
+  };
+  const signUpEmail = async () => {
+    const authUser = await auth.createUserWithEmailAndPassword(email, password);
+  };
+
   return (
     <Grid container component="main" className={classes.root}>
       <CssBaseline />
@@ -90,7 +120,7 @@ const Auth: React.FC = () => {
             Sign in
           </Typography>
           <form className={classes.form} noValidate>
-            <TextField
+          <TextField
               variant="outlined"
               margin="normal"
               required
@@ -99,7 +129,10 @@ const Auth: React.FC = () => {
               label="Email Address"
               name="email"
               autoComplete="email"
-              autoFocus
+              value={email}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setEmail(e.target.value);
+              }}
             />
             <TextField
               variant="outlined"
@@ -111,17 +144,90 @@ const Auth: React.FC = () => {
               type="password"
               id="password"
               autoComplete="current-password"
+              value={password}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setPassword(e.target.value);
+              }}
             />
+
             <Button
-              type="submit"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
+              startIcon={<EmailIcon />}
+              onClick={
+                isLogin
+                  ? async () => {
+                      try {
+                        await signInEmail();
+                      } catch (err: any) {
+                        alert(err.message);
+                      }
+                    }
+                  : async () => {
+                      try {
+                        await signUpEmail();
+                      } catch (err: any) {
+                        alert(err.message);
+                      }
+                    }
+              }
             >
-              Sign In
+              {isLogin ? "Login" : "Register"}
+            </Button>
+            <Grid container>
+              <Grid item xs>
+                <span
+                  className={styles.login_reset}
+                  onClick={() => setOpenModal(true)}
+                >
+                  Forgot password ?
+                </span>
+              </Grid>
+              <Grid item>
+                <span
+                  className={styles.login_toggleMode}
+                  onClick={() => setIsLogin(!isLogin)}
+                >
+                  {isLogin ? "Create new account ?" : "Back to login"}
+                </span>
+              </Grid>
+            </Grid>
+
+            <Button
+              fullWidth
+              variant="contained"
+              color="default"
+              className={classes.submit}
+              startIcon={<CameraIcon />}
+              onClick={signInGoogle}
+            >
+              SignIn with Google
             </Button>
           </form>
+
+          <Modal open={openModal} onClose={() => setOpenModal(false)}>
+            <div style={getModalStyle()} className={classes.modal}>
+              <div className={styles.login_modal}>
+                <TextField
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  type="email"
+                  name="email"
+                  label="Reset E-mail"
+                  value={resetEmail}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    setResetEmail(e.target.value);
+                  }}
+                />
+                <IconButton onClick={sendResetEmail}>
+                  <SendIcon />
+                </IconButton>
+              </div>
+            </div>
+          </Modal>
         </div>
       </Grid>
     </Grid>
