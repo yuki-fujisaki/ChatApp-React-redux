@@ -1,3 +1,54 @@
+# SetUp
+
+## Install Homebrew, Nodebrew ,Node.js
+
+Install them, any method is fine.
+run `node -v` and check if yours is more than v14.15.5.
+
+## Install Material-UI
+
+`npm i @material-ui/core`
+`npm i @material-ui/icons`
+
+## Firebase
+
+### install firebase
+
+`npm i firebase@8.10.0`
+
+### Launch firebase project
+
+Then Launch a project
+
+### setup .env
+
+Make `.env` in the directly below the your project
+Fill out in those blank refering to SDK snipets in firebase setting, and make sure if radio button of configuration checked.
+**caution:** Put PROJECT_ID in databaseURL
+
+```.env
+    REACT_APP_FIREBASE_APIKEY="〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇"
+    REACT_APP_FIREBASE_DOMAIN="〇〇〇〇〇〇〇〇〇〇.firebaseapp.com"
+    REACT_APP_FIREBASE_DATABASE="https://PROJECT_ID.firebaseio.com"
+    REACT_APP_FIREBASE_PROJECT_ID="〇〇〇〇〇〇〇〇〇〇"
+    REACT_APP_FIREBASE_STORAGE_BUCKET="〇〇〇〇〇〇〇〇.appspot.com"
+    REACT_APP_FIREBASE_SENDER_ID="〇〇〇〇〇〇〇〇〇〇"
+    REACT_APP_FIREBASE_APP_ID="〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇〇"
+```
+
+## Firebase Authentication
+
+From firebase console in your project, launch Authentication and enable functionality of email and Google account
+
+## Firebase Could FireStore
+
+From firebase console in your project, launch CouldFireStore and enable functionality of Could FireStore
+
+**caution:**
+Change `allow read, write: if false;` into `allow read, write: if true;` in FireStore' rules tab.
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
 ## Available Scripts
